@@ -179,14 +179,14 @@ class Solution {
       std::sort(bt.begin(), bt.end(), [this](const std::pair<int, int>& a, const std::pair<int, int>& b) {
          return cells[a.first][a.second].numberOfPossibilities < cells[b.first][b.second].numberOfPossibilities;
          });
-      return backtrack(0);
+      return backtrack(bt.begin());
    }
 
-   bool backtrack(int k) {
-      if (k >= bt.size()) return true;
+   bool backtrack(std::vector<std::pair<int, int>>::iterator k) {
+      if (k == bt.end()) return true;
 
-      auto i = bt[k].first;
-      auto j = bt[k].second;
+      auto i = (*k).first;
+      auto j = (*k).second;
 
       // Fast path
       if (cells[i][j].valueIsSet) return backtrack(k + 1);
