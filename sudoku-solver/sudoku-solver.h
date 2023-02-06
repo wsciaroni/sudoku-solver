@@ -22,7 +22,7 @@ public:
 };
 
 class Solution {
-   bool loggingEnabled = false;
+   static const bool loggingEnabled = false;
 
    void inline printVectorState(std::vector<std::vector<Cell>>& vect) {
       if (!loggingEnabled) return;
