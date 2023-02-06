@@ -1,5 +1,3 @@
-﻿// sudoku-solver.cpp : Defines the entry point for the application.
-//
 
 #include "sudoku-solver.h"
 #include <string>
@@ -67,6 +65,7 @@ void printArr(const std::vector<std::vector<char>>& arr) {
 		}
 	}
 }
+
 int main(int argc, char** argv)
 {
 	if (argc < 2) { return -1; }
