@@ -164,6 +164,13 @@ class Solution {
    // Keep a list of empty cells at the beginning to back track
    std::vector<std::pair<int, int>> bt;
 
+   void sortBt(const std::vector<std::pair<int, int>>::iterator & it) {
+      // Sort the list by the number of possibilites remaining in each cell
+      std::sort(it, bt.end(), [this](const std::pair<int, int>& a, const std::pair<int, int>& b) {
+         return cells[a.first][a.second].numberOfPossibilities < cells[b.first][b.second].numberOfPossibilities;
+      });
+   }
+
    bool findValuesForEmptyCells() {
       bt.clear();
 
@@ -176,9 +183,7 @@ class Solution {
       }
 
       // Sort the list by the number of possibilites remaining in each cell
-      std::sort(bt.begin(), bt.end(), [this](const std::pair<int, int>& a, const std::pair<int, int>& b) {
-         return cells[a.first][a.second].numberOfPossibilities < cells[b.first][b.second].numberOfPossibilities;
-      });
+      sortBt(bt.begin());
       return backtrack(bt.begin());
    }
 
@@ -193,9 +198,7 @@ class Solution {
          if (loggingEnabled) {
             std::cout << "BSorting: " << std::distance(k + 1, bt.end()) << " elements" << std::endl;
          }
-         std::sort(k+1, bt.end(), [this](const std::pair<int, int>& a, const std::pair<int, int>& b) {
-            return cells[a.first][a.second].numberOfPossibilities < cells[b.first][b.second].numberOfPossibilities;
-         });
+         sortBt(k + 1);
          return backtrack(k + 1);
       }
 
@@ -209,9 +212,7 @@ class Solution {
                if (loggingEnabled) {
                   std::cout << "ASorting: " << std::distance(k + 1, bt.end()) << " elements" << std::endl;
                }
-               std::sort(k + 1, bt.end(), [this](const std::pair<int, int>& a, const std::pair<int, int>& b) {
-                  return cells[a.first][a.second].numberOfPossibilities < cells[b.first][b.second].numberOfPossibilities;
-               });
+               sortBt(k + 1);
                if (backtrack(k + 1)) {
                   return true;
                }
