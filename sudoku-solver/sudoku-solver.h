@@ -24,7 +24,7 @@ public:
 class Solution {
    bool loggingEnabled = false;
 
-   void printVectorState(std::vector<std::vector<Cell>>& vect) {
+   void inline printVectorState(std::vector<std::vector<Cell>>& vect) {
       if (!loggingEnabled) return;
       std::cout << "[" << std::endl;
       for (int i = 0; i < 9; i++) {
@@ -37,7 +37,7 @@ class Solution {
       std::cout << "]" << std::endl;
    }
 
-   void initialize() {
+   void inline initialize() {
       cells.resize(9);
       for (auto& arr : cells) {
          arr.resize(9);
@@ -54,7 +54,7 @@ class Solution {
       }
    }
 
-   bool setValue(int i, int j, int value) {
+   bool inline setValue(int i, int j, int value) {
       if (loggingEnabled) {
          std::cout << "Setting value at: [" << i << "," << j << "]: " << (char)(value + '0') << std::endl;
       }
@@ -124,7 +124,7 @@ class Solution {
       return true;
    }
 
-   bool updateConstraints(int i, int j, int excludedValue) {
+   bool inline updateConstraints(int i, int j, int excludedValue) {
       if (loggingEnabled) {
          std::cout << "Attempting to exclude the value " << (char)(excludedValue + '0') << " at [" << i << "," << j << "]" << std::endl;
       }
@@ -164,14 +164,14 @@ class Solution {
    // Keep a list of empty cells at the beginning to back track
    std::vector<std::pair<int, int>> bt;
 
-   void sortBt(const std::vector<std::pair<int, int>>::iterator & it) {
+   void inline sortBt(const std::vector<std::pair<int, int>>::iterator & it) {
       // Sort the list by the number of possibilites remaining in each cell
       std::sort(it, bt.end(), [this](const std::pair<int, int>& a, const std::pair<int, int>& b) {
          return cells[a.first][a.second].numberOfPossibilities < cells[b.first][b.second].numberOfPossibilities;
       });
    }
 
-   bool findValuesForEmptyCells() {
+   bool inline findValuesForEmptyCells() {
       bt.clear();
 
       for (int i = 0; i < 9; i++) {
@@ -187,7 +187,7 @@ class Solution {
       return backtrack(bt.begin());
    }
 
-   bool backtrack(std::vector<std::pair<int, int>>::iterator k) {
+   bool inline backtrack(std::vector<std::pair<int, int>>::iterator k) {
       if (k == bt.end()) return true;
 
       auto i = (*k).first;
