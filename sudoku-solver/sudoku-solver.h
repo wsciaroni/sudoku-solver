@@ -198,7 +198,7 @@ class Solution {
          if (loggingEnabled) {
             std::cout << "BSorting: " << std::distance(k + 1, bt.end()) << " elements" << std::endl;
          }
-         sortBt(k + 1);
+         //sortBt(k + 1);
          return backtrack(k + 1);
       }
 
