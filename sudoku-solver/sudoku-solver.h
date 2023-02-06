@@ -176,9 +176,9 @@ class Solution {
       }
 
       // Sort the list by the number of possibilites remaining in each cell
-      std::sort(bt.begin(), bt.end(), [&](const std::pair<int, int>& a, const std::pair<int, int>& b) {
+      std::sort(bt.begin(), bt.end(), [this](const std::pair<int, int>& a, const std::pair<int, int>& b) {
          return cells[a.first][a.second].numberOfPossibilities < cells[b.first][b.second].numberOfPossibilities;
-         });
+      });
       return backtrack(bt.begin());
    }
 
@@ -189,7 +189,15 @@ class Solution {
       auto j = (*k).second;
 
       // Fast path
-      if (cells[i][j].valueIsSet) return backtrack(k + 1);
+      if (cells[i][j].valueIsSet) {
+         if (loggingEnabled) {
+            std::cout << "BSorting: " << std::distance(k + 1, bt.end()) << " elements" << std::endl;
+         }
+         std::sort(k+1, bt.end(), [this](const std::pair<int, int>& a, const std::pair<int, int>& b) {
+            return cells[a.first][a.second].numberOfPossibilities < cells[b.first][b.second].numberOfPossibilities;
+         });
+         return backtrack(k + 1);
+      }
 
       auto constraints = cells[i][j].constraints;
 
@@ -198,6 +206,12 @@ class Solution {
       for (int v = 1; v <= 9; v++) {
          if (!constraints[v]) {
             if (setValue(i, j, v)) {
+               if (loggingEnabled) {
+                  std::cout << "ASorting: " << std::distance(k + 1, bt.end()) << " elements" << std::endl;
+               }
+               std::sort(k + 1, bt.end(), [this](const std::pair<int, int>& a, const std::pair<int, int>& b) {
+                  return cells[a.first][a.second].numberOfPossibilities < cells[b.first][b.second].numberOfPossibilities;
+               });
                if (backtrack(k + 1)) {
                   return true;
                }
