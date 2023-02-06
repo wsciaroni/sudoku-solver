@@ -176,7 +176,7 @@ class Solution {
       }
 
       // Sort the list by the number of possibilites remaining in each cell
-      std::sort(bt.begin(), bt.end(), [this](const std::pair<int, int>& a, const std::pair<int, int>& b) {
+      std::sort(bt.begin(), bt.end(), [&](const std::pair<int, int>& a, const std::pair<int, int>& b) {
          return cells[a.first][a.second].numberOfPossibilities < cells[b.first][b.second].numberOfPossibilities;
          });
       return backtrack(bt.begin());
