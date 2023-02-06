@@ -8,12 +8,13 @@ This is designed in a way to solve the Leetcode problem for Sudoku solver
 - Build with the CMake Command
 
 ```bash
-mkdir build
-cd build
-cmake ..
-cmake --build .
+mkdir ./build
+cmake -S ./ -B ./build
+cmake --build ./build
 ```
 
 ## Running
 
-`./build/sudoku-solver ./input/input.txt`
+On Windows, From the project directory:
+`.\build\sudoku-solver\Release\sudoku-solver.exe .\input\input.txt`
+
