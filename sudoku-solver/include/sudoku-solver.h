@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <array>
 #include <vector>
 
 #include "Cell.h"
@@ -12,6 +13,11 @@
  */
 class Solution
 {
+public:
+	/// @brief Hold the number of rows or cols in a standard Sudoku board
+	static const size_t SUDOKU_SIZE = 9;
+
+private:
 	/// @brief True if Logging is enabled throughout the application
 	static const bool loggingEnabled = false;
 
@@ -20,7 +26,7 @@ class Solution
 	 *
 	 * @param vect The board to print
 	 */
-	void inline printVectorState(std::vector<std::vector<Cell>> &vect);
+	void inline printVectorState(std::array<std::array<Cell, SUDOKU_SIZE>, SUDOKU_SIZE>& vect);
 
 	/**
 	 * @brief Initialize the Board
@@ -88,7 +94,7 @@ class Solution
 	bool inline backtrack(std::vector<std::pair<int, int>>::iterator k);
 
 	/// @brief Hold the current state of the board
-	std::vector<std::vector<Cell>> cells; // 9x9 vector of cell
+	std::array<std::array<Cell, SUDOKU_SIZE>, SUDOKU_SIZE> cells; // 9x9 vector of cell
 
 public:
 	/**
@@ -98,5 +104,5 @@ public:
 	 * 
 	 * If the sudoku can't be solve, the board remains untouched
 	 */
-	void solveSudoku(std::vector<std::vector<char>> &board);
+	void solveSudoku(std::array<std::array<char, Solution::SUDOKU_SIZE>, Solution::SUDOKU_SIZE>&board);
 };

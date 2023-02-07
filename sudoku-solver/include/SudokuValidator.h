@@ -1,11 +1,11 @@
 #pragma once
 
-#include <vector>
+#include <array>
 
 class SudokuValidator
 {
 private:
     /* data */
 public:
-    static bool isSudokuValid(std::vector<std::vector<char>>& board);
+    static bool isSudokuValid(std::array<std::array<char, 9>, 9>& board);
 };

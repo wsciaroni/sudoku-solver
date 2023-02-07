@@ -4,12 +4,12 @@
 #include <cassert>
 #include <algorithm>
 
-inline void Solution::printVectorState(std::vector<std::vector<Cell>>& vect) {
+inline void Solution::printVectorState(std::array<std::array<Cell,Solution::SUDOKU_SIZE>, Solution::SUDOKU_SIZE>& vect) {
 	if (!loggingEnabled) return;
 	std::cout << "[" << std::endl;
-	for (int i = 0; i < 9; i++) {
+	for (int i = 0; i < SUDOKU_SIZE; i++) {
 		std::cout << "[";
-		for (int j = 0; j < 9; j++) {
+		for (int j = 0; j < SUDOKU_SIZE; j++) {
 			std::cout << "\"" << (char)(vect[i][j].value + '0') << "\"";
 		}
 		std::cout << "]," << std::endl;
@@ -18,17 +18,6 @@ inline void Solution::printVectorState(std::vector<std::vector<Cell>>& vect) {
 }
 
 inline void Solution::initialize() {
-	cells.resize(9);
-	for (auto& arr : cells) {
-		arr.resize(9);
-	}
-
-	for (int i = 0; i < 9; i++) {
-		for (int j = 0; j < 9; j++) {
-			cells[i][i].value = 0;
-		}
-	}
-
 	if (loggingEnabled) {
 		std::cout << "Initialzied all cells" << std::endl;
 	}
@@ -66,7 +55,7 @@ inline bool Solution::setValue(int i, int j, int value) {
 	c.value = value;
 	c.valueIsSet = true;
 
-	for (int k = 0; k < 9; k++) {
+	for (int k = 0; k < SUDOKU_SIZE; k++) {
 		// Apply constraints to the row
 		if (i != k) {
 			if (!updateConstraints(k, j, value)) {
@@ -130,7 +119,7 @@ inline bool Solution::updateConstraints(int i, int j, int excludedValue) {
 	if (c.numberOfPossibilities > 1) return true; // If we haven't reached the last number of possibilities
 
 	// We've reached the last posibility for the individual value
-	for (int v = 1; v <= 9; v++) {
+	for (int v = 1; v <= SUDOKU_SIZE; v++) {
 		if (!c.constraints[v]) {
 			return setValue(i, j, v);
 		}
@@ -151,8 +140,8 @@ inline void Solution::sortBt(const std::vector<std::pair<int, int>>::iterator& i
 inline bool Solution::findValuesForEmptyCells() {
 	bt.clear();
 
-	for (int i = 0; i < 9; i++) {
-		for (int j = 0; j < 9; j++) {
+	for (int i = 0; i < SUDOKU_SIZE; i++) {
+		for (int j = 0; j < SUDOKU_SIZE; j++) {
 			if (!cells[i][j].valueIsSet) {
 				bt.emplace_back(i, j);
 			}
@@ -183,7 +172,7 @@ inline bool Solution::backtrack(std::vector<std::pair<int, int>>::iterator k) {
 
 	auto snapshot = cells; // Create a copy of the array as a backup
 
-	for (int v = 1; v <= 9; v++) {
+	for (int v = 1; v <= SUDOKU_SIZE; v++) {
 		if (!constraints[v]) {
 			if (setValue(i, j, v)) {
 				if (loggingEnabled) {
@@ -200,11 +189,11 @@ inline bool Solution::backtrack(std::vector<std::pair<int, int>>::iterator k) {
 	return false;
 }
 
-void Solution::solveSudoku(std::vector<std::vector<char>>& board) {
+void Solution::solveSudoku(std::array<std::array<char, Solution::SUDOKU_SIZE>, Solution::SUDOKU_SIZE>& board) {
 	initialize();
 
-	for (int i = 0; i < 9; i++) {
-		for (int j = 0; j < 9; j++) {
+	for (int i = 0; i < SUDOKU_SIZE; i++) {
+		for (int j = 0; j < SUDOKU_SIZE; j++) {
 			if (board[i][j] != '.') {
 				if (!setValue(i, j, board[i][j] - '0'))
 				{
@@ -219,8 +208,8 @@ void Solution::solveSudoku(std::vector<std::vector<char>>& board) {
 
 	if (!findValuesForEmptyCells()) return; // unsolvable.
 
-	for (int i = 0; i < 9; i++) {
-		for (int j = 0; j < 9; j++) {
+	for (int i = 0; i < SUDOKU_SIZE; i++) {
+		for (int j = 0; j < SUDOKU_SIZE; j++) {
 			if (cells[i][j].valueIsSet) {
 				board[i][j] = cells[i][j].value + '0';
 			}
