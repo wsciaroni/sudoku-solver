@@ -138,7 +138,7 @@ inline bool Solution::updateConstraints(int i, int j, int excludedValue) {
 
 	// This should never happen
 	// throw std::logic_error("Somehow the Cell has 1 possibility remaining, but none available in the set function");
-	assert(false);
+	return false;
 }
 
 inline void Solution::sortBt(const std::vector<std::pair<int, int>>::iterator& it) {
