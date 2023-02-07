@@ -35,6 +35,14 @@ if(MSVC)
   set_target_properties(gmock_main PROPERTIES FOLDER "external/Google")
 endif(MSVC)
 
+set(CTEST_PROJECT_NAME "sudoku-solver")
+set(CTEST_NIGHTLY_START_TIME "01:00:00 UTC")
+
+set(CTEST_DROP_METHOD "https")
+set(CTEST_DROP_SITE "my.cdash.org")
+set(CTEST_DROP_LOCATION "/submit.php?project=sudoku-solver")
+set(CTEST_DROP_SITE_CDASH TRUE)
+
 enable_testing()
 endif(BUILD_SUDOKU_TESTS)
 
