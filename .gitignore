@@ -3,6 +3,8 @@
 /out/
 
 /build/
+/html/
+/latex/
 
 # From GitHub's C++ template
 
