@@ -3,7 +3,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-#include <vector>
+#include <array>
 #include <chrono>
 
 /**
@@ -22,16 +22,14 @@
  *  [".",".",".","4","1","9",".",".","5"],
  *  [".",".",".",".","8",".",".","7","9"]]
 */
-std::vector<std::vector<char>> readFileToArr(const std::string& filename) {
+std::array<std::array<char, 9>, 9> readFileToArr(const std::string& filename) {
 	std::ifstream source;
 	source.open(filename);
 
-	std::vector<std::vector<char>> board;
-	board.resize(9);
+	std::array<std::array<char,9>,9> board;
 	char c = '#';
 	source >> std::skipws >> c; // Read "["
 	for (int i = 0; i < 9; i++) {
-		board[i].resize(9);
 		source >> std::skipws >> c; // Read "["
 		for (int j = 0; j < 9; j++) {
 			source >> std::skipws >> c; // Read "\""
@@ -47,7 +45,7 @@ std::vector<std::vector<char>> readFileToArr(const std::string& filename) {
 	return board;
 }
 
-void printArr(const std::vector<std::vector<char>>& arr) {
+void printArr(const std::array<std::array<char, 9>, 9>& arr) {
 	int colCount = 0;
 	for (const auto& v : arr) {
 		int rowCount = 0;
@@ -70,7 +68,7 @@ int main(int argc, char** argv)
 {
 	if (argc < 2) { return -1; }
 	std::string inputFilename(argv[1]);
-	std::vector<std::vector<char>> board = readFileToArr(inputFilename);
+	std::array<std::array<char, 9>, 9> board = readFileToArr(inputFilename);
 
 	std::cout << "Array read in as follows: " << std::endl << std::endl;
 	printArr(board);
