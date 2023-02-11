@@ -218,3 +218,20 @@ void Solution::solveSudoku(std::array<std::array<char, Solution::SUDOKU_SIZE>, S
 
 	printVectorState(cells);
 }
+
+void Solution::solveSudoku(std::array<std::array<int, Solution::SUDOKU_SIZE>, Solution::SUDOKU_SIZE>&board) {
+	std::array<std::array<char, SUDOKU_SIZE>, SUDOKU_SIZE> boardChar;
+	for(int i = 0; i < SUDOKU_SIZE; i++) {
+		for(int j = 0; j < SUDOKU_SIZE; j++) {
+			boardChar[i][j] = board[i][j] + '0';
+		}
+	}
+
+	solveSudoku(boardChar);
+
+	for(int i = 0; i < SUDOKU_SIZE; i++) {
+		for(int j = 0; j < SUDOKU_SIZE; j++) {
+			board[i][j] = boardChar[i][j] - '0';
+		}
+	}
+}

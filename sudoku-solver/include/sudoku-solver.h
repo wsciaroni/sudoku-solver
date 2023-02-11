@@ -105,4 +105,6 @@ public:
 	 * If the sudoku can't be solve, the board remains untouched
 	 */
 	void solveSudoku(std::array<std::array<char, Solution::SUDOKU_SIZE>, Solution::SUDOKU_SIZE>&board);
+
+	void solveSudoku(std::array<std::array<int, Solution::SUDOKU_SIZE>, Solution::SUDOKU_SIZE>&board);
 };
