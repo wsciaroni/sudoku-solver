@@ -21,6 +21,16 @@ private:
 	/// @brief True if Logging is enabled throughout the application
 	static const bool loggingEnabled = false;
 
+	template <typename T = uint8_t>
+	char intToChar(T i) {
+		return i+'0';
+	};
+
+	template <typename T = uint8_t>
+	T charToInt(char c) {
+		return c-'0';
+	};
+
 	/**
 	 * @brief Print the value in each of the board's cells
 	 *

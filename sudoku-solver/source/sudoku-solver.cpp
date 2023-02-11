@@ -10,7 +10,7 @@ inline void Solution::printVectorState(std::array<std::array<Cell,Solution::SUDO
 	for (int i = 0; i < SUDOKU_SIZE; i++) {
 		std::cout << "[";
 		for (int j = 0; j < SUDOKU_SIZE; j++) {
-			std::cout << "\"" << (char)(vect[i][j].value + '0') << "\"";
+			std::cout << "\"" << intToChar(vect[i][j].value) << "\"";
 		}
 		std::cout << "]," << std::endl;
 	}
@@ -25,7 +25,7 @@ inline void Solution::initialize() {
 
 inline bool Solution::setValue(int i, int j, int value) {
 	if (loggingEnabled) {
-		std::cout << "Setting value at: [" << i << "," << j << "]: " << (char)(value + '0') << std::endl;
+		std::cout << "Setting value at: [" << i << "," << j << "]: " << intToChar(value) << std::endl;
 	}
 	Cell& c = cells[i][j];
 
@@ -95,7 +95,7 @@ inline bool Solution::setValue(int i, int j, int value) {
 
 inline bool Solution::updateConstraints(int i, int j, int excludedValue) {
 	if (loggingEnabled) {
-		std::cout << "Attempting to exclude the value " << (char)(excludedValue + '0') << " at [" << i << "," << j << "]" << std::endl;
+		std::cout << "Attempting to exclude the value " << intToChar(excludedValue) << " at [" << i << "," << j << "]" << std::endl;
 	}
 	Cell& c = cells[i][j];
 
@@ -195,7 +195,7 @@ void Solution::solveSudoku(std::array<std::array<char, Solution::SUDOKU_SIZE>, S
 	for (int i = 0; i < SUDOKU_SIZE; i++) {
 		for (int j = 0; j < SUDOKU_SIZE; j++) {
 			if (board[i][j] != '.') {
-				if (!setValue(i, j, board[i][j] - '0'))
+				if (!setValue(i, j, charToInt(board[i][j])))
 				{
 					if (loggingEnabled) {
 						std::cout << "Unable to initialize, Either invalid, or unsolvable" << std::endl;
@@ -211,7 +211,7 @@ void Solution::solveSudoku(std::array<std::array<char, Solution::SUDOKU_SIZE>, S
 	for (int i = 0; i < SUDOKU_SIZE; i++) {
 		for (int j = 0; j < SUDOKU_SIZE; j++) {
 			if (cells[i][j].valueIsSet) {
-				board[i][j] = cells[i][j].value + '0';
+				board[i][j] = intToChar(cells[i][j].value);
 			}
 		}
 	}
