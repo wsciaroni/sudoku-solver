@@ -9,4 +9,4 @@ RUN apt-get update && \
     tar -xf cmake-3.20.1-linux-x86_64.tar.gz && \
     rm cmake-3.20.1-linux-x86_64.tar.gz;
 
-ENV PATH "$PATH:/:/cmake-3.20.1-linux-x86_64/bin"
+ENV PATH "/cmake-3.20.1-linux-x86_64/bin:/:$PATH"
