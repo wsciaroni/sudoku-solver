@@ -16,8 +16,7 @@
 			"settings": {},
 			"extensions": [
 				"streetsidesoftware.code-spell-checker",
-				"ms-vscode.cpptools-extension-pack",
-				"SonarSource.sonarlint-vscode"
+				"ms-vscode.cpptools-extension-pack"
 			]
 		}
 	}
