@@ -37,18 +37,19 @@ inline bool Solution::setValue(int i, int j, int value) {
 		return true;
 	}
 
+	// If we've already deterimined that this cell can't be this value, return false
+	if (c.checkIfValueCouldNotBe(value)) {
+		if (loggingEnabled) {
+			std::cout << "Cannot set, this violates the constraints from earlier..." << std::endl;
+		}
+		return false;
+	}
+
 	if (loggingEnabled) {
 		std::cout << "Setting this value." << std::endl;
 	}
 
-	try {
-		c.setCellValue(value);
-	} catch(std::exception& e) {
-		if (loggingEnabled) {
-			std::cout << "Cannot set, this violates the constraints from earlier... " << e.what() << std::endl;
-		}
-		return false;
-	}
+	c.setCellValue(value);
 
 	for (int k = 0; k < SUDOKU_SIZE; k++) {
 		// Apply constraints to the row
@@ -100,19 +101,24 @@ inline bool Solution::updateConstraints(int i, int j, int excludedValue) {
 		}
 		return true;
 	}
-
-	// If the value could be valid, AND the constraints don't have this excluded, let's remove it from the constraints
-	try {
-		c.excludeValue(excludedValue);
-	} catch(std::exception&) {
-		return false;
+	if (c.valueIsSet() && c.getValue() == excludedValue) {
+		if (loggingEnabled) {
+			std::cout << "Can't constrain field. Value already set" << std::endl;
+		}
+		return false; // We were wrong in our attempt
 	}
 
-	try {
-		return setValue(i,j,c.getRemainingPossibility());
-	} catch (std::exception&) {
-		return true;
-	} 
+	// If the value could be valid, AND the constraints don't have this excluded, let's remove it from the constraints
+	c.excludeValue(excludedValue);
+
+	if (c.getNumberOfRemainingPossibilities() > 1) return true; // If we haven't reached the last number of possibilities
+
+	
+	return setValue(i,j,c.getRemainingPossibility());
+
+	// This should never happen
+	// throw std::logic_error("Somehow the Cell has 1 possibility remaining, but none available in the set function");
+	return false;
 }
 
 inline void Solution::sortBt(const std::vector<std::pair<int, int>>::iterator& it) {
