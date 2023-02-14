@@ -12,6 +12,12 @@ target_include_directories(sudoku-solver-lib PUBLIC "${CMAKE_CURRENT_LIST_DIR}/i
 add_executable (sudoku-solver main.cpp)
 target_link_libraries(sudoku-solver PUBLIC sudoku-solver-lib)
 
+if(CPPCHECK_FOUND)
+    #set(CMAKE_CXX_CPPCHECK "${CPPCHECK_BIN};--std=c++${CMAKE_CXX_STANDARD};--verbose;--quiet")
+    set_target_properties(sudoku-solver-lib PROPERTIES CXX_CPPCHECK "${CPPCHECK_BIN};--std=c++${CMAKE_CXX_STANDARD};--verbose;--quiet")
+    set_target_properties(sudoku-solver PROPERTIES CXX_CPPCHECK "${CPPCHECK_BIN};--std=c++${CMAKE_CXX_STANDARD};--verbose;--quiet")
+endif()
+
 if(BUILD_SUDOKU_TESTS)
 # Tests
 file(GLOB_RECURSE sudokutests "${CMAKE_CURRENT_LIST_DIR}/test/*.cpp")
