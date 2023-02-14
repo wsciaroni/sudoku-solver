@@ -10,7 +10,7 @@ inline void Solution::printVectorState(std::array<std::array<Cell,Solution::SUDO
 	for (int i = 0; i < SUDOKU_SIZE; i++) {
 		std::cout << "[";
 		for (int j = 0; j < SUDOKU_SIZE; j++) {
-			std::cout << "\"" << intToChar(vect[i][j].value) << "\"";
+			std::cout << "\"" << intToChar(vect[i][j].getValue()) << "\"";
 		}
 		std::cout << "]," << std::endl;
 	}
@@ -30,7 +30,7 @@ inline bool Solution::setValue(int i, int j, int value) {
 	Cell& c = cells[i][j];
 
 	// We've already determined this value and it matches
-	if (c.valueIsSet && c.value == value) {
+	if (c.valueIsSet() && c.getValue() == value) {
 		if (loggingEnabled) {
 			std::cout << "Value already set" << std::endl;
 		}
@@ -38,7 +38,7 @@ inline bool Solution::setValue(int i, int j, int value) {
 	}
 
 	// If we've already deterimined that this cell can't be this value, return false
-	if (c.constraints[value]) {
+	if (c.checkIfValueCouldNotBe(value)) {
 		if (loggingEnabled) {
 			std::cout << "Cannot set, this violates the constraints from earlier..." << std::endl;
 		}
@@ -49,11 +49,7 @@ inline bool Solution::setValue(int i, int j, int value) {
 		std::cout << "Setting this value." << std::endl;
 	}
 
-	c.constraints = std::bitset<10>(0b1111111111); // 10 ones
-	c.constraints.reset(value);
-	c.numberOfPossibilities = 1;
-	c.value = value;
-	c.valueIsSet = true;
+	c.setCellValue(value);
 
 	for (int k = 0; k < SUDOKU_SIZE; k++) {
 		// Apply constraints to the row
@@ -99,13 +95,13 @@ inline bool Solution::updateConstraints(int i, int j, int excludedValue) {
 	}
 	Cell& c = cells[i][j];
 
-	if (c.constraints[excludedValue]) {
+	if (c.checkIfValueCouldNotBe(excludedValue)) {
 		if (loggingEnabled) {
 			std::cout << "Constraints already set" << std::endl;
 		}
 		return true;
 	}
-	if (c.valueIsSet && c.value == excludedValue) {
+	if (c.valueIsSet() && c.getValue() == excludedValue) {
 		if (loggingEnabled) {
 			std::cout << "Can't constrain field. Value already set" << std::endl;
 		}
@@ -113,17 +109,12 @@ inline bool Solution::updateConstraints(int i, int j, int excludedValue) {
 	}
 
 	// If the value could be valid, AND the constraints don't have this excluded, let's remove it from the constraints
-	c.constraints.set(excludedValue);
-	c.numberOfPossibilities--;
+	c.excludeValue(excludedValue);
 
-	if (c.numberOfPossibilities > 1) return true; // If we haven't reached the last number of possibilities
+	if (c.getNumberOfRemainingPossibilities() > 1) return true; // If we haven't reached the last number of possibilities
 
-	// We've reached the last posibility for the individual value
-	for (int v = 1; v <= SUDOKU_SIZE; v++) {
-		if (!c.constraints[v]) {
-			return setValue(i, j, v);
-		}
-	}
+	
+	return setValue(i,j,c.getRemainingPossibility());
 
 	// This should never happen
 	// throw std::logic_error("Somehow the Cell has 1 possibility remaining, but none available in the set function");
@@ -133,7 +124,7 @@ inline bool Solution::updateConstraints(int i, int j, int excludedValue) {
 inline void Solution::sortBt(const std::vector<std::pair<int, int>>::iterator& it) {
 	// Sort the list by the number of possibilites remaining in each cell
 	std::sort(it, bt.end(), [this](const std::pair<int, int>& a, const std::pair<int, int>& b) {
-		return cells[a.first][a.second].numberOfPossibilities < cells[b.first][b.second].numberOfPossibilities;
+		return cells[a.first][a.second].getNumberOfRemainingPossibilities() < cells[b.first][b.second].getNumberOfRemainingPossibilities();
 		});
 }
 
@@ -142,7 +133,7 @@ inline bool Solution::findValuesForEmptyCells() {
 
 	for (int i = 0; i < SUDOKU_SIZE; i++) {
 		for (int j = 0; j < SUDOKU_SIZE; j++) {
-			if (!cells[i][j].valueIsSet) {
+			if (!cells[i][j].valueIsSet()) {
 				bt.emplace_back(i, j);
 			}
 		}
@@ -160,7 +151,7 @@ inline bool Solution::backtrack(std::vector<std::pair<int, int>>::iterator k) {
 	auto j = (*k).second;
 
 	// Fast path
-	if (cells[i][j].valueIsSet) {
+	if (cells[i][j].valueIsSet()) {
 		if (loggingEnabled) {
 			std::cout << "BSorting: " << std::distance(k + 1, bt.end()) << " elements" << std::endl;
 		}
@@ -168,23 +159,21 @@ inline bool Solution::backtrack(std::vector<std::pair<int, int>>::iterator k) {
 		return backtrack(k + 1);
 	}
 
-	auto constraints = cells[i][j].constraints;
+	auto possibilities = cells[i][j].getRemainingPossiblities();
 
 	auto snapshot = cells; // Create a copy of the array as a backup
 
-	for (int v = 1; v <= SUDOKU_SIZE; v++) {
-		if (!constraints[v]) {
-			if (setValue(i, j, v)) {
-				if (loggingEnabled) {
-					std::cout << "ASorting: " << std::distance(k + 1, bt.end()) << " elements" << std::endl;
-				}
-				sortBt(k + 1);
-				if (backtrack(k + 1)) {
-					return true;
-				}
+	for(auto v : possibilities) {
+		if (setValue(i, j, v)) {
+			if (loggingEnabled) {
+				std::cout << "ASorting: " << std::distance(k + 1, bt.end()) << " elements" << std::endl;
 			}
-			cells = snapshot;
+			sortBt(k + 1);
+			if (backtrack(k + 1)) {
+				return true;
+			}
 		}
+		cells = snapshot;
 	}
 	return false;
 }
@@ -210,8 +199,8 @@ void Solution::solveSudoku(std::array<std::array<char, Solution::SUDOKU_SIZE>, S
 
 	for (int i = 0; i < SUDOKU_SIZE; i++) {
 		for (int j = 0; j < SUDOKU_SIZE; j++) {
-			if (cells[i][j].valueIsSet) {
-				board[i][j] = intToChar(cells[i][j].value);
+			if (cells[i][j].valueIsSet()) {
+				board[i][j] = intToChar(cells[i][j].getValue());
 			}
 		}
 	}
