@@ -28,9 +28,24 @@ private:
     */
    std::bitset<10> constraints = 0b0000000000; // 0b1111111111;
 
+   /**
+    * @brief Check the value i for valid index of values
+    * @throws std::out_of_range if i is less than 1 or greater than 9
+   */
+   void throwIfOutOfRange(int i) const;
+
 public:
+   /**
+    * @brief Check if the Cell has been set
+    * @return true if the value has been set
+   */
    bool valueIsSet() const;
    
+   /**
+    * @brief Get the value of the cell
+    * @return value of the cell
+    * @throws std::logic_error if the Cell has not been set
+   */
    uint8_t getValue() const;
 
    /**
@@ -57,7 +72,8 @@ public:
    /**
     * @brief Update the constraint to know that this IS NOT the value in this cell
     * @param excludedValue The value to reject
-    * @throw std::logic_error If the value is inconsistent
+    * @throws std::logic_error If the value is inconsistent
+    * @throws std::out_of_range If the value is not valid
    */
    void excludeValue(int excludedValue);
 
@@ -65,18 +81,23 @@ public:
     * @brief Get the value of the last possible value
     * @return The value of the last possible value
     * @throws std::logic_error if there are more than one possibilities
+    * 
+    * In theory, this could throw std::out_of_range... That should never happen
    */
    int getRemainingPossibility() const;
 
    /**
     * @brief Get the possible values
-    * @return
+    * @return List of the remaining possibilities
+    * 
+    * In theory, this could throw std::out_of_range... That should never happen
    */
    std::list<int> getRemainingPossiblities() const;
 
    /**
     * @brief Sets the value of the cell authoritatively
     * @param i The value of the cell
+    * @throws std::out_of_range If the cell is not set and the value is out of range
     * @throws Std::logic_error If the cell cannot be this value
    */
    void setCellValue(int i);

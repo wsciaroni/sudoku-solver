@@ -2,12 +2,25 @@
 
 #include <stdexcept>
 
-bool Cell::valueIsSet() const {
+void Cell::throwIfOutOfRange(int i) const
+{
+    if(i < 1) {
+        throw std::out_of_range("Invalid value (i < 1) for sudoku Cell");
+    }
+
+    if(i > SUDOKU_SIZE) {
+        throw std::out_of_range("Invalid value (i > 9) for sudoku Cell");
+    }
+}
+
+bool Cell::valueIsSet() const
+{
     return isSet;
 }
 
 uint8_t Cell::getValue() const
 {
+    if(!valueIsSet()) throw std::logic_error("You got the value of a cell that has not been set!");
     return value;
 }
 
@@ -19,6 +32,8 @@ uint8_t Cell::getNumberOfRemainingPossibilities() const
 bool Cell::checkIfValueCouldBe(int i) const
 {
     if(valueIsSet()) return i == getValue();
+    
+    throwIfOutOfRange(i);
 
     return !constraints.test(i);
 }
@@ -30,13 +45,21 @@ bool Cell::checkIfValueCouldNotBe(int i) const
 
 void Cell::excludeValue(int excludedValue)
 {
-    constraints.set(excludedValue);
-    numberOfPossibilitiesRemaining--;
+    if(valueIsSet() && getValue() == excludedValue) throw std::logic_error("Attempting to set an exclude for the value of the cell is illogical");
+    
+    throwIfOutOfRange(excludedValue);
+
+    if(checkIfValueCouldBe(excludedValue)) {
+        constraints.set(excludedValue);
+        numberOfPossibilitiesRemaining--;
+    }
 }
 
 int Cell::getRemainingPossibility() const
 {
     if(getNumberOfRemainingPossibilities() != 1) throw std::logic_error("There are more than 1 remaining possibilities");
+
+    if(valueIsSet()) return getValue();
     
     // We've reached the last posibility for the individual value
     int retVal = -1;
@@ -63,6 +86,13 @@ std::list<int> Cell::getRemainingPossiblities() const
 
 void Cell::setCellValue(int i)
 {
+    if(valueIsSet()) {
+        if(getValue() == i) {
+            return;
+        }
+        throw std::logic_error("Attempting to set value that's already set to a different value");
+    }
+
     if(checkIfValueCouldNotBe(i)) throw std::logic_error("Attempt to set the value failed! We already determined that can't be");
 
     constraints = std::bitset<10>(0b1111111111); // 10 ones
