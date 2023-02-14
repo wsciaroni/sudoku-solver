@@ -16,6 +16,12 @@ endif(MSVC)
 option(BUILD_SUDOKU_TESTS OFF)
 option(CODE_COVERAGE OFF)
 
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+find_package(CPPCHECK)
+if(CPPCHECK_FOUND)
+    #set(CMAKE_CXX_CPPCHECK "${CPPCHECK_BIN};--std=c++${CMAKE_CXX_STANDARD};--verbose;--quiet")
+endif()
+
 ### Tests setup
 if(BUILD_SUDOKU_TESTS)
 include(FetchContent)
